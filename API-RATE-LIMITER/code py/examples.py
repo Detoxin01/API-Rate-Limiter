@@ -21,11 +21,11 @@ def print_header(title):
 
 def print_response(response: RateLimitResponse, request_num: int):
     """Print rate limit response"""
-    status = "✅ ALLOWED" if response.allowed else "❌ REJECTED"
+    status = "[OK] ALLOWED" if response.allowed else "[X] REJECTED"
     print(f"Request {request_num:3d}: {status} | "
           f"Remaining: {response.remaining:3d} | "
           f"In Window: {response.requests_in_window:3d}", end="")
-    
+
     if not response.allowed:
         print(f" | Retry After: {response.retry_after}s")
     else:
@@ -153,7 +153,7 @@ def example_5_per_client_isolation():
         print(f"Round {round_num}:")
         for client_id in clients:
             response = limiter.is_allowed(client_id)
-            status = "✅" if response.allowed else "❌"
+            status = "[OK]" if response.allowed else "[X]"
             print(f"  {client_id}: {status} (Remaining: {response.remaining})")
         print()
 
@@ -242,19 +242,19 @@ def example_8_reset_functionality():
     print("Using 5 requests...")
     for i in range(5):
         response = limiter.is_allowed(client_id)
-        print(f"  Request {i+1}: {'✅' if response.allowed else '❌'}")
-    
+        print(f"  Request {i+1}: {'[OK]' if response.allowed else '[X]'}")
+
     # Try one more - should be rejected
     response = limiter.is_allowed(client_id)
-    print(f"\nRequest 6: {'✅' if response.allowed else '❌'} (Expected: ❌)")
-    
+    print(f"\nRequest 6: {'[OK]' if response.allowed else '[X]'} (Expected: [X])")
+
     # Reset
     print("\nResetting rate limit...")
     limiter.reset(client_id)
-    
+
     # Try again
     response = limiter.is_allowed(client_id)
-    print(f"Request 6 (after reset): {'✅' if response.allowed else '❌'} (Expected: ✅)")
+    print(f"Request 6 (after reset): {'[OK]' if response.allowed else '[X]'} (Expected: [OK])")
 
 
 def example_9_comparison():
@@ -336,28 +336,28 @@ def example_10_real_world_scenario():
     print("Endpoint: /api/public (100 req/min)")
     for client in clients:
         response = public_limiter.is_allowed(client)
-        status = "✅" if response.allowed else "❌"
+        status = "[OK]" if response.allowed else "[X]"
         print(f"  {client}: {status}")
-    
+
     print("\nEndpoint: /api/premium (1000 req/hour)")
     for client in clients:
         response = premium_limiter.is_allowed(client)
-        status = "✅" if response.allowed else "❌"
+        status = "[OK]" if response.allowed else "[X]"
         print(f"  {client}: {status}")
-    
+
     print("\nEndpoint: /api/write (10 req/min - strict)")
     for client in clients:
         response = write_limiter.is_allowed(client)
-        status = "✅" if response.allowed else "❌"
+        status = "[OK]" if response.allowed else "[X]"
         print(f"  {client}: {status}")
 
 
 def main():
     """Run all examples"""
     print("\n")
-    print("╔" + "="*58 + "╗")
-    print("║" + " "*10 + "ADVANCED RATE LIMITER - EXAMPLES" + " "*16 + "║")
-    print("╚" + "="*58 + "╝")
+    print("=" * 60)
+    print(" " * 10 + "ADVANCED RATE LIMITER - EXAMPLES")
+    print("=" * 60)
     
     examples = [
         example_1_basic_token_bucket,
@@ -376,8 +376,8 @@ def main():
         try:
             example_func()
         except Exception as e:
-            print(f"\n❌ Error in {example_func.__name__}: {e}\n")
-        
+            print(f"\n[ERROR] Error in {example_func.__name__}: {e}\n")
+
         input("\nPress Enter to continue to next example...")
     
     print("\n" + "="*60)
